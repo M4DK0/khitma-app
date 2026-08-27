@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>الخِتمة المتقنة 🌙</title>
+<meta name="theme-color" content="#1c1712">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="الخِتمة المتقنة">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1712;
+    --paper:#faf5e7;
+    --paper-2:#f0e6cc;
+    --paper-3:#e6d9b8;
+    --gold:#b8863b;
+    --gold-light:#e0b46c;
+    --teal:#3e6e64;
+    --teal-light:#5c9184;
+    --rose:#b4674c;
+    --sage:#6f9a6a;
+    --text-ink:#f6efdd;
+    --text-paper:#2b2115;
+    --text-paper-soft:#5f5138;
+    --muted:#ab9d81;
+    --radius:18px;
+    --radius-sm:12px;
+    --shadow: 0 10px 28px rgba(0,0,0,.28);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -8%, #2c2318 0%, transparent 55%),
+      radial-gradient(ellipse 700px 500px at 105% 5%, #234038 0%, transparent 48%),
+      var(--ink);
+    color:var(--text-ink);
+    font-family:'Cairo',sans-serif;
+    min-height:100vh;
+    padding-bottom: calc(28px + var(--safe-b));
+    font-size:15.5px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:18px 14px 0;}
+
+  /* Header */
+  .header{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding-bottom:16px;margin-bottom:16px;
+  }
+  .header .title-block h1{
+    font-family:'Amiri',serif;font-weight:700;font-size:24px;margin:0;
+    color:var(--gold-light);letter-spacing:.3px;
+  }
+  .header .title-block p{margin:5px 0 0;color:var(--muted);font-size:12.5px;}
+  .date-chip{
+    background:rgba(224,180,108,.09);border:1px solid rgba(224,180,108,.28);
+    border-radius:16px;padding:9px 14px;font-size:12px;color:var(--gold-light);
+    text-align:center;line-height:1.55;flex-shrink:0;white-space:nowrap;
+  }
+  .date-chip b{display:block;color:var(--text-ink);font-size:13.5px;font-weight:800;}
+
+  /* Tabs — sticky, thumb-friendly */
+  .tabs{
+    display:flex;gap:6px;margin-bottom:18px;position:sticky;top:0;z-index:20;
+    background:linear-gradient(var(--ink) 78%, transparent);
+    padding:8px 0 10px;
+  }
+  .tab-btn{
+    flex:1;background:rgba(246,239,221,.05);border:1px solid rgba(224,180,108,.16);
+    color:var(--muted);font-family:'Cairo',sans-serif;font-weight:700;font-size:12.5px;
+    padding:11px 4px;border-radius:13px;cursor:pointer;transition:.2s;
+    display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px;justify-content:center;
+  }
+  .tab-btn .ic{font-size:16px;}
+  .tab-btn.active{background:var(--gold);border-color:var(--gold);color:#241a0d;}
+
+  .panel{display:none;animation:fade .28s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{
+    background:var(--paper);color:var(--text-paper);border-radius:var(--radius);
+    padding:20px 18px;margin-bottom:16px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;border-radius:var(--radius);
+    box-shadow:inset 0 0 0 1px rgba(43,33,21,.06);pointer-events:none;
+  }
+  .card h2{font-family:'Amiri',serif;font-size:19px;margin:0 0 3px;color:var(--text-paper);
+    display:flex;align-items:center;gap:8px;font-weight:700;}
+  .card .sub{color:var(--text-paper-soft);font-size:13px;margin:0 0 16px;line-height:1.6;}
+
+  /* Five fortresses */
+  .fortresses{display:flex;gap:8px;justify-content:space-between;margin-bottom:4px;}
+  .fortress{flex:1;text-align:center;cursor:pointer;user-select:none;padding:4px 2px 8px;border-radius:12px;transition:.2s;}
+  .fortress:active{transform:scale(.95);}
+  .fortress.lit{background:rgba(184,134,59,.09);}
+  .fortress svg{width:100%;height:auto;display:block;max-width:52px;margin:0 auto;}
+  .fortress .tower-fill{transition:fill .3s ease;}
+  .fortress .flame{transition:opacity .3s ease;opacity:0;}
+  .fortress.lit .flame{opacity:1;}
+  .fortress .check-badge{
+    width:18px;height:18px;border-radius:50%;background:var(--sage);color:#fff;font-size:11px;
+    display:flex;align-items:center;justify-content:center;margin:4px auto 0;opacity:0;transition:.2s;
+  }
+  .fortress.lit .check-badge{opacity:1;}
+  .fortress .label{font-size:10.5px;margin-top:5px;color:var(--text-paper-soft);line-height:1.35;display:block;font-weight:700;min-height:28px;}
+  .fortress.lit .label{color:var(--gold);}
+
+  .quran-off-note{
+    text-align:center;color:var(--text-paper-soft);font-size:13.5px;padding:16px 10px;
+    background:var(--paper-2);border-radius:var(--radius-sm);
+  }
+  .quran-off-note .emoji{font-size:24px;display:block;margin-bottom:6px;}
+
+  /* task rows */
+  .task-row{
+    display:flex;align-items:center;gap:12px;padding:13px 2px;
+    border-bottom:1px solid rgba(43,33,21,.08);
+  }
+  .task-row:last-child{border-bottom:none;}
+  .task-check{
+    width:30px;height:30px;flex:0 0 30px;border-radius:9px;border:2px solid var(--paper-3);
+    background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:.2s;font-size:16px;color:transparent;font-weight:800;
+  }
+  .task-check.checked{background:var(--sage);border-color:var(--sage);color:#fff;}
+  .task-check:active{transform:scale(.9);}
+  .task-info{flex:1;}
+  .task-info .name{font-weight:700;font-size:14.5px;}
+  .task-info .freq{font-size:11.5px;color:var(--text-paper-soft);margin-top:1px;}
+
+  .no-tasks{text-align:center;color:var(--text-paper-soft);padding:26px 10px;font-size:14px;}
+  .no-tasks .emoji{font-size:26px;display:block;margin-bottom:6px;}
+
+  /* progress bar */
+  .progress-outer{background:var(--paper-3);border-radius:999px;height:16px;overflow:hidden;margin:12px 0 8px;}
+  .progress-inner{background:linear-gradient(90deg,var(--gold),var(--gold-light));height:100%;border-radius:999px;transition:width .45s ease;}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
+  .stat-box{background:var(--paper-2);border-radius:var(--radius-sm);padding:13px 6px;text-align:center;}
+  .stat-box .num{font-size:21px;font-weight:800;color:var(--teal);font-family:'Amiri',serif;}
+  .stat-box .lbl{font-size:10.5px;color:var(--text-paper-soft);margin-top:3px;font-weight:600;}
+
+  .page-controls{display:flex;align-items:center;gap:12px;margin-top:16px;justify-content:center;}
+  .page-controls button{
+    background:var(--teal);color:#fff;border:none;border-radius:11px;width:44px;height:44px;
+    font-size:20px;cursor:pointer;font-weight:700;flex-shrink:0;
+  }
+  .page-controls button:active{transform:scale(.92);}
+  .page-controls input{
+    width:90px;text-align:center;padding:11px 6px;border-radius:10px;border:1.5px solid var(--paper-3);
+    font-family:'Cairo',sans-serif;font-weight:800;font-size:16px;background:#fff;color:var(--text-paper);
+  }
+
+  /* settings row */
+  .settings-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;flex-wrap:wrap;}
+  .settings-row label{font-size:13.5px;font-weight:700;flex:1;min-width:150px;}
+  .settings-row input[type=number], .settings-row input[type=date]{
+    padding:9px 10px;border-radius:9px;border:1.5px solid var(--paper-3);font-family:'Cairo',sans-serif;
+    width:118px;font-size:14.5px;background:#fff;color:var(--text-paper);font-weight:700;
+  }
+  .toggle{
+    width:50px;height:28px;border-radius:999px;background:var(--paper-3);position:relative;cursor:pointer;flex:0 0 50px;
+    transition:.2s;
+  }
+  .toggle.on{background:var(--sage);}
+  .toggle::after{
+    content:"";position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;
+    background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25);
+  }
+  .toggle.on::after{right:25px;}
+
+  /* schedule — mobile-first day picker */
+  .day-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none;}
+  .day-pills::-webkit-scrollbar{display:none;}
+  .day-pill{
+    flex:0 0 auto;min-width:56px;text-align:center;padding:10px 8px;border-radius:12px;
+    background:var(--paper-2);border:2px solid transparent;cursor:pointer;font-weight:800;font-size:12.5px;
+    color:var(--text-paper-soft);transition:.2s;
+  }
+  .day-pill .dot{display:block;font-size:10px;margin-top:3px;color:var(--gold);min-height:12px;}
+  .day-pill.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .day-pill.active .dot{color:var(--gold-light);}
+  .day-pill.today{border-color:var(--gold);}
+
+  .sched-list .task-row{align-items:center;}
+  .sched-toggle-btn{
+    padding:8px 16px;border-radius:10px;border:1.5px solid var(--paper-3);background:#fff;
+    font-family:'Cairo',sans-serif;font-weight:800;font-size:12.5px;color:var(--text-paper-soft);cursor:pointer;
+    flex-shrink:0;transition:.2s;
+  }
+  .sched-toggle-btn.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+  .podcast-box{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:var(--paper-2);border-radius:var(--radius-sm);padding:16px;
+  }
+  .podcast-box .status{font-size:14px;font-weight:800;}
+  .podcast-box button{
+    background:var(--rose);color:#fff;border:none;padding:11px 18px;border-radius:10px;
+    font-family:'Cairo',sans-serif;font-weight:800;cursor:pointer;font-size:13px;min-height:44px;
+  }
+  .podcast-box button:active{transform:scale(.96);}
+
+  .footer-note{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;line-height:1.9;padding:0 10px;}
+  .footer-note b{color:var(--gold-light);}
+
+  @media (max-width:380px){
+    .fortress .label{font-size:9.5px;}
+    .stat-box .num{font-size:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="title-block">
+      <h1>🌙 الخِتمة المتقنة</h1>
+      <p>تثبيت ومراجعة الحفظ ✨ الحصون الخمسة</p>
+    </div>
+    <div class="date-chip" id="dateChip">—</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="today"><span class="ic">🕌</span>اليوم</button>
+    <button class="tab-btn" data-tab="quran"><span class="ic">📖</span>الخِتمة</button>
+    <button class="tab-btn" data-tab="schedule"><span class="ic">🗓️</span>الجدول</button>
+    <button class="tab-btn" data-tab="stats"><span class="ic">⭐</span>إحصائيات</button>
+  </div>
+
+  <!-- TODAY -->
+  <div class="panel active" id="panel-today">
+
+    <div class="card">
+      <h2>🏰 الحصون الخمسة</h2>
+      <p class="sub" id="quranTodayNote"></p>
+      <div id="fortressesWrap"></div>
+      <div id="quranOffNote" style="display:none" class="quran-off-note">
+        <span class="emoji">🌿</span>
+        اليوم يوم راحة من ورد الحفظ ضمن جدولك — عدّليه من تبويب «الجدول» في أي وقت
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>✨ أنشطة اليوم</h2>
+      <p class="sub">حسب جدولك الأسبوعي المخصص</p>
+      <div id="otherTasksWrap"></div>
+    </div>
+
+  </div>
+
+  <!-- QURAN -->
+  <div class="panel" id="panel-quran">
+    <div class="card">
+      <h2>📖 تقدّم الختمة الحالية</h2>
+      <p class="sub" id="cycleLabel">—</p>
+      <div class="progress-outer"><div class="progress-inner" id="quranProgressBar" style="width:0%"></div></div>
+      <p class="sub" id="quranProgressText" style="margin:0;font-weight:800;color:var(--teal);font-size:14px;"></p>
+
+      <div class="stat-grid">
+        <div class="stat-box"><div class="num" id="statJuz">—</div><div class="lbl">📗 الجزء تقريبًا</div></div>
+        <div class="stat-box"><div class="num" id="statHizb">—</div><div class="lbl">📘 الحزب تقريبًا</div></div>
+        <div class="stat-box"><div class="num" id="statWeeksLeft">—</div><div class="lbl">⏳ أسابيع متبقية</div></div>
+      </div>
+
+      <div class="page-controls">
+        <button id="pageMinus">−</button>
+        <input type="number" id="pageInput" min="0" inputmode="numeric">
+        <button id="pagePlus">+</button>
+      </div>
+      <p class="sub" style="text-align:center;margin-top:10px;">✏️ اضبطي رقم الصفحة يدويًا إن احتجت لتصحيحه</p>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ إعدادات خطة الحفظ</h2>
+      <div class="settings-row">
+        <label>📄 إجمالي صفحات المصحف</label>
+        <input type="number" id="setTotalPages" inputmode="numeric">
+      </div>
+      <div class="settings-row">
+        <label>📌 صفحات الحفظ اليومية</label>
+        <input type="number" id="setPagesPerDay" inputmode="numeric">
+      </div>
+      <div class="settings-row">
+        <label>🗓️ تاريخ بدء الختمة الحالية</label>
+        <input type="date" id="setStartDate">
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE -->
+  <div class="panel" id="panel-schedule">
+    <div class="card">
+      <h2>🗓️ الجدول الأسبوعي</h2>
+      <p class="sub">اختاري يومًا، ثم فعّلي أو عطّلي أنشطته — يتحدّث تبويب «اليوم» تلقائيًا</p>
+      <div class="day-pills" id="dayPills"></div>
+      <div class="sched-list" id="schedList"></div>
+    </div>
+
+    <div class="card">
+      <h2>🧸 خياطة ملابس الأطفال</h2>
+      <div class="settings-row">
+        <label>هل أنهيتِ دورة خياطة المفروشات؟</label>
+        <div class="toggle" id="kidsSewToggle"></div>
+      </div>
+      <p class="sub" style="margin:0;">فعّلي هذا الخيار لإظهار نشاط خياطة ملابس الأطفال في جدولك الأسبوعي.</p>
+    </div>
+
+    <div class="card">
+      <h2>🎙️ البودكاست</h2>
+      <p class="sub">إعداد وتسجيل حلقة كل 15 يومًا — لا يتبع جدولاً أسبوعيًا ثابتًا</p>
+      <div class="podcast-box">
+        <div>
+          <div class="status" id="podcastStatus">—</div>
+          <div class="sub" id="podcastSub" style="margin:4px 0 0;"></div>
+        </div>
+        <button id="podcastBtn">✅ سجّلت حلقة اليوم</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="panel" id="panel-stats">
+    <div class="card">
+      <h2>🔥 الانتظام في الحصون الخمسة</h2>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="num" id="statStreak">0</div><div class="lbl">🔥 أيام متتالية</div></div>
+        <div class="stat-box"><div class="num" id="statLongest">0</div><div class="lbl">🏆 أطول سلسلة</div></div>
+        <div class="stat-box"><div class="num" id="statTotalDays">0</div><div class="lbl">✅ إجمالي الأيام</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📅 آخر 7 أيام</h2>
+      <div id="weekHistory"></div>
+    </div>
+  </div>
+
+  <div class="footer-note">🔒 جميع بياناتك محفوظة على هذا الجهاز فقط.<br><b>بارك الله في حفظك وجهدك 🌙✨</b></div>
+</div>
+
+<script>
+(function(){
+
+const ACTIVITIES = [
+  {id:'warsh', name:'أصول رواية ورش', icon:'📖'},
+  {id:'sport', name:'الرياضة', icon:'🏃‍♀️'},
+  {id:'fiqh', name:'الفقه المالكي', icon:'⚖️'},
+  {id:'sewFurniture', name:'خياطة المفروشات', icon:'🧵'},
+  {id:'sewKids', name:'خياطة ملابس الأطفال', icon:'🧸', requiresUnlock:true},
+  {id:'diverse', name:'المحتوى المنوع', icon:'🎬'},
+  {id:'kidsContent', name:'المحتوى التعليمي للأطفال', icon:'🧒'},
+];
+
+const FORTRESSES = [
+  {id:'ward', name:'ورد يومي حزبين', short:'📿 الورد'},
+  {id:'tahdirBaeed', name:'تحضير بعيد 12 صفحة', short:'🔭 بعيد'},
+  {id:'tahdirQareeb', name:'تحضير قريب صفحتين', short:'🔎 قريب'},
+  {id:'hifz', name:'حفظ يومي صفحتين', short:'✍️ الحفظ'},
+  {id:'murajaa', name:'مراجعة المحفوظ', short:'🔁 مراجعة'},
+];
+
+const DAY_ORDER = [6,0,1,2,3,4,5]; // Sat..Fri as JS getDay() values
+const DAY_SHORT = {0:'أحد',1:'اثنين',2:'ثلاثاء',3:'أربعاء',4:'خميس',5:'جمعة',6:'سبت'};
+const DAY_NAMES_FULL = {0:'الأحد',1:'الاثنين',2:'الثلاثاء',3:'الأربعاء',4:'الخميس',5:'الجمعة',6:'السبت'};
+
+const DEFAULT_SETTINGS = {
+  totalPages: 604,
+  pagesPerDay: 2,
+  startDate: null,
+  kidsSewUnlocked: false,
+  podcastIntervalDays: 15,
+  lastPodcastDate: null,
+  schedule: {
+    quran: [6,0,1,2,3,4],
+    warsh: [0,1,3,4],
+    sport: [6,2,4],
+    fiqh: [1,3],
+    sewFurniture: [0,2],
+    sewKids: [6,4],
+    diverse: [2,5],
+    kidsContent: [5],
+  }
+};
+
+let settings = null;
+let quranProgress = {currentPage:0, cycle:1};
+let stats = {currentStreak:0, longestStreak:0, totalDaysCompleted:0, lastCompletedDate:null};
+let todayKey = '';
+let todayData = {fortresses:{}, activities:{}};
+let selectedDay = new Date().getDay();
+
+function fmtDate(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
+
+const LS_PREFIX = 'khitma:';
+
+async function safeGet(key, shared=false){
+  // 1) المصدر الرئيسي: localStorage — يخدم في أي موقع حقيقي ويبقى محفوظ بعد إغلاق الصفحة
+  try{
+    const raw = localStorage.getItem(LS_PREFIX+key);
+    if(raw !== null) return JSON.parse(raw);
+  }catch(e){}
+  // 2) fallback: window.storage (يخدم فقط داخل معاينة Claude)
+  try{
+    if(window.storage && typeof window.storage.get === 'function'){
+      const r = await window.storage.get(key, shared);
+      return r ? JSON.parse(r.value) : null;
+    }
+  }catch(e){}
+  return null;
+}
+
+async function safeSet(key, value, shared=false){
+  let localOk = true;
+  try{ localStorage.setItem(LS_PREFIX+key, JSON.stringify(value)); }
+  catch(e){ localOk = false; console.error('local save failed', key, e); }
+
+  // نحفظ أيضًا في window.storage إذا كانت متوفرة (بونيّة، بدون ما تعطّل الحفظ المحلي)
+  try{
+    if(window.storage && typeof window.storage.set === 'function'){
+      await window.storage.set(key, JSON.stringify(value), shared);
+    }
+  }catch(e){}
+
+  showSaveStatus(localOk);
+}
+
+let saveStatusTimer = null;
+function showSaveStatus(ok){
+  let el = document.getElementById('saveStatus');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'saveStatus';
+    el.style.cssText = 'position:fixed;bottom:calc(10px + var(--safe-b));left:50%;transform:translateX(-50%);'
+      + 'background:rgba(28,23,18,.92);color:var(--gold-light);font-size:11.5px;font-weight:700;'
+      + 'padding:6px 14px;border-radius:999px;z-index:50;opacity:0;transition:opacity .25s ease;pointer-events:none;';
+    document.body.appendChild(el);
+  }
+  el.textContent = ok ? '💾 تم الحفظ' : '⚠️ تعذّر الحفظ على هذا الجهاز';
+  el.style.opacity = '1';
+  clearTimeout(saveStatusTimer);
+  saveStatusTimer = setTimeout(()=>{ el.style.opacity = '0'; }, 1200);
+}
+
+async function loadAll(){
+  const now = new Date();
+  todayKey = fmtDate(now);
+
+  const s = await safeGet('settings');
+  settings = s ? {...DEFAULT_SETTINGS, ...s, schedule:{...DEFAULT_SETTINGS.schedule, ...(s.schedule||{})}} : {...DEFAULT_SETTINGS};
+  if(!settings.startDate){ settings.startDate = todayKey; await safeSet('settings', settings); }
+
+  const qp = await safeGet('quranProgress');
+  quranProgress = qp || {currentPage:0, cycle:1};
+
+  const st = await safeGet('stats');
+  stats = st || {currentStreak:0, longestStreak:0, totalDaysCompleted:0, lastCompletedDate:null};
+
+  const td = await safeGet('daily:'+todayKey);
+  todayData = td || {fortresses:{}, activities:{}};
+
+  render();
+}
+
+function isQuranDay(date){ return settings.schedule.quran.includes(date.getDay()); }
+function isActivityDay(id, date){ return (settings.schedule[id]||[]).includes(date.getDay()); }
+
+function renderHeader(){
+  const now = new Date();
+  const dayName = DAY_NAMES_FULL[now.getDay()];
+  const dateStr = now.toLocaleDateString('ar', {day:'numeric', month:'short'});
+  let hijri = '';
+  try{
+    hijri = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'short'}).format(now);
+  }catch(e){}
+  document.getElementById('dateChip').innerHTML = `<b>${dayName}</b>${dateStr}${hijri ? ' · '+hijri : ''}`;
+}
+
+function fortressSvg(litClass){
+  const towerColor = litClass ? 'var(--teal)' : '#e2d4b0';
+  const roofColor = litClass ? 'var(--gold)' : '#d6c69c';
+  const doorColor = litClass ? '#2f544c' : '#d1c19a';
+  return `
+  <svg viewBox="0 0 64 76">
+    <rect class="tower-fill" x="14" y="30" width="36" height="40" rx="4" fill="${towerColor}"/>
+    <rect x="8" y="22" width="8" height="14" rx="1" fill="${towerColor}"/>
+    <rect x="48" y="22" width="8" height="14" rx="1" fill="${towerColor}"/>
+    <path d="M20 30 L32 12 L44 30 Z" fill="${roofColor}"/>
+    <circle class="flame" cx="32" cy="6" r="5" fill="var(--gold-light)"/>
+    <rect x="27" y="46" width="10" height="24" rx="2" fill="${doorColor}"/>
+  </svg>`;
+}
+
+function renderFortresses(){
+  const wrap = document.getElementById('fortressesWrap');
+  const now = new Date();
+  const qDay = isQuranDay(now);
+  document.getElementById('quranOffNote').style.display = qDay ? 'none' : 'block';
+  document.getElementById('quranTodayNote').textContent = qDay
+    ? '💪 اليوم من أيام ورد الحفظ — أتمّي حصونك الخمسة'
+    : '';
+
+  if(!qDay){ wrap.innerHTML=''; return; }
+
+  const doneCount = FORTRESSES.filter(f=>todayData.fortresses[f.id]).length;
+
+  wrap.innerHTML = `<div class="fortresses">${FORTRESSES.map(f=>{
+    const lit = !!todayData.fortresses[f.id];
+    return `<div class="fortress ${lit?'lit':''}" data-id="${f.id}">
+      ${fortressSvg(lit)}
+      <div class="check-badge">✓</div>
+      <span class="label">${f.short}</span>
+    </div>`;
+  }).join('')}</div>
+  <p class="sub" style="text-align:center;margin:10px 0 0;font-weight:700;">${doneCount===5 ? '🎉 أتممتِ حصونك الخمسة اليوم!' : `أنجزتِ ${doneCount} من 5`}</p>`;
+
+  wrap.querySelectorAll('.fortress').forEach(el=>{
+    el.addEventListener('click', ()=> toggleFortress(el.dataset.id));
+  });
+}
+
+async function toggleFortress(id){
+  const wasOn = !!todayData.fortresses[id];
+  todayData.fortresses[id] = !wasOn;
+  await safeSet('daily:'+todayKey, todayData);
+
+  if(id === 'hifz'){
+    if(!wasOn){ quranProgress.currentPage += settings.pagesPerDay; }
+    else{ quranProgress.currentPage = Math.max(0, quranProgress.currentPage - settings.pagesPerDay); }
+    if(quranProgress.currentPage >= settings.totalPages){
+      quranProgress.currentPage = 0;
+      quranProgress.cycle = (quranProgress.cycle||1) + 1;
+    }
+    await safeSet('quranProgress', quranProgress);
+  }
+
+  await updateStreakIfComplete();
+  render();
+}
+
+async function updateStreakIfComplete(){
+  const allDone = FORTRESSES.every(f => !!todayData.fortresses[f.id]);
+  if(allDone && stats.lastCompletedDate !== todayKey){
+    if(stats.lastCompletedDate){
+      const prev = new Date(stats.lastCompletedDate);
+      const diff = daysBetween(prev, new Date(todayKey));
+      stats.currentStreak = (diff <= 3) ? stats.currentStreak + 1 : 1;
+    } else {
+      stats.currentStreak = 1;
+    }
+    stats.longestStreak = Math.max(stats.longestStreak||0, stats.currentStreak);
+    stats.totalDaysCompleted = (stats.totalDaysCompleted||0) + 1;
+    stats.lastCompletedDate = todayKey;
+    await safeSet('stats', stats);
+  } else if(!allDone && stats.lastCompletedDate === todayKey){
+    stats.totalDaysCompleted = Math.max(0, (stats.totalDaysCompleted||1) - 1);
+    stats.currentStreak = Math.max(0, (stats.currentStreak||1) - 1);
+    stats.lastCompletedDate = null;
+    await safeSet('stats', stats);
+  }
+}
+
+function renderOtherTasks(){
+  const wrap = document.getElementById('otherTasksWrap');
+  const now = new Date();
+  const todays = ACTIVITIES.filter(a => {
+    if(a.requiresUnlock && !settings.kidsSewUnlocked) return false;
+    return isActivityDay(a.id, now);
+  });
+
+  if(todays.length === 0){ wrap.innerHTML = '<div class="no-tasks"><span class="emoji">🌿</span>لا توجد أنشطة إضافية مجدولة اليوم</div>'; return; }
+
+  wrap.innerHTML = todays.map(a=>{
+    const checked = !!todayData.activities[a.id];
+    return `<div class="task-row">
+      <div class="task-check ${checked?'checked':''}" data-id="${a.id}">${checked?'✓':''}</div>
+      <div class="task-info"><div class="name">${a.icon} ${a.name}</div></div>
+    </div>`;
+  }).join('');
+
+  wrap.querySelectorAll('.task-check').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      const id = el.dataset.id;
+      todayData.activities[id] = !todayData.activities[id];
+      await safeSet('daily:'+todayKey, todayData);
+      renderOtherTasks();
+    });
+  });
+}
+
+function renderQuranTab(){
+  const pct = Math.min(100, Math.round((quranProgress.currentPage / settings.totalPages) * 100));
+  document.getElementById('quranProgressBar').style.width = pct+'%';
+  document.getElementById('quranProgressText').textContent = `📄 الصفحة ${quranProgress.currentPage} من ${settings.totalPages} (${pct}%)`;
+  document.getElementById('cycleLabel').textContent = `🔄 الختمة رقم ${quranProgress.cycle || 1} — بدأت في ${settings.startDate}`;
+
+  document.getElementById('statJuz').textContent = Math.min(30, Math.max(1, Math.ceil(quranProgress.currentPage / (settings.totalPages/30)) || 1));
+  document.getElementById('statHizb').textContent = Math.min(60, Math.max(1, Math.ceil(quranProgress.currentPage / (settings.totalPages/60)) || 1));
+
+  const remainingPages = Math.max(0, settings.totalPages - quranProgress.currentPage);
+  const sessionsLeft = Math.ceil(remainingPages / settings.pagesPerDay);
+  const quranDaysPerWeek = settings.schedule.quran.length || 6;
+  const weeksLeft = Math.ceil(sessionsLeft / quranDaysPerWeek);
+  document.getElementById('statWeeksLeft').textContent = weeksLeft;
+
+  document.getElementById('pageInput').value = quranProgress.currentPage;
+  document.getElementById('setTotalPages').value = settings.totalPages;
+  document.getElementById('setPagesPerDay').value = settings.pagesPerDay;
+  document.getElementById('setStartDate').value = settings.startDate;
+}
+
+function renderDayPills(){
+  const pillsWrap = document.getElementById('dayPills');
+  const todayJs = new Date().getDay();
+  pillsWrap.innerHTML = DAY_ORDER.map(d=>{
+    const count = countActivitiesForDay(d);
+    return `<div class="day-pill ${d===selectedDay?'active':''} ${d===todayJs?'today':''}" data-day="${d}">
+      ${DAY_SHORT[d]}
+      <span class="dot">${count>0 ? '● '+count : ''}</span>
+    </div>`;
+  }).join('');
+  pillsWrap.querySelectorAll('.day-pill').forEach(el=>{
+    el.addEventListener('click', ()=>{ selectedDay = parseInt(el.dataset.day,10); renderScheduleTab(); });
+  });
+}
+
+function countActivitiesForDay(d){
+  let n = settings.schedule.quran.includes(d) ? 1 : 0;
+  ACTIVITIES.forEach(a=>{
+    if(a.requiresUnlock && !settings.kidsSewUnlocked) return;
+    if((settings.schedule[a.id]||[]).includes(d)) n++;
+  });
+  return n;
+}
+
+function renderScheduleTab(){
+  renderDayPills();
+  const rows = [{id:'quran', name:'الحصون الخمسة (ورد الحفظ)', icon:'🏰'}, ...ACTIVITIES.filter(a=>!a.requiresUnlock || settings.kidsSewUnlocked)];
+  const listWrap = document.getElementById('schedList');
+  listWrap.innerHTML = rows.map(r=>{
+    const on = (settings.schedule[r.id]||[]).includes(selectedDay);
+    return `<div class="task-row">
+      <div class="task-info"><div class="name">${r.icon} ${r.name}</div></div>
+      <button class="sched-toggle-btn ${on?'on':''}" data-act="${r.id}">${on?'✓ نشِط':'إضافة'}</button>
+    </div>`;
+  }).join('');
+  listWrap.querySelectorAll('.sched-toggle-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const act = btn.dataset.act;
+      const arr = settings.schedule[act] || [];
+      const idx = arr.indexOf(selectedDay);
+      if(idx>=0) arr.splice(idx,1); else arr.push(selectedDay);
+      settings.schedule[act] = arr;
+      await safeSet('settings', settings);
+      renderScheduleTab();
+      renderFortresses(); renderOtherTasks();
+    });
+  });
+
+  const toggle = document.getElementById('kidsSewToggle');
+  toggle.className = 'toggle' + (settings.kidsSewUnlocked ? ' on' : '');
+
+  renderPodcast();
+}
+
+function renderPodcast(){
+  const now = new Date();
+  let daysSince = null, dueIn = null;
+  if(settings.lastPodcastDate){
+    daysSince = daysBetween(new Date(settings.lastPodcastDate), now);
+    dueIn = settings.podcastIntervalDays - daysSince;
+  }
+  const statusEl = document.getElementById('podcastStatus');
+  const subEl = document.getElementById('podcastSub');
+  if(!settings.lastPodcastDate){
+    statusEl.textContent = '🎙️ لم تُسجَّل أي حلقة بعد';
+    subEl.textContent = 'اضغطي الزر عند تسجيل أول حلقة';
+  } else if(dueIn <= 0){
+    statusEl.textContent = '📢 حان وقت تسجيل حلقة جديدة';
+    subEl.textContent = `آخر حلقة قبل ${daysSince} يومًا`;
+  } else {
+    statusEl.textContent = `⏳ متبقٍ ${dueIn} يومًا للحلقة القادمة`;
+    subEl.textContent = `آخر حلقة: ${settings.lastPodcastDate}`;
+  }
+}
+
+function renderStatsTab(){
+  document.getElementById('statStreak').textContent = stats.currentStreak || 0;
+  document.getElementById('statLongest').textContent = stats.longestStreak || 0;
+  document.getElementById('statTotalDays').textContent = stats.totalDaysCompleted || 0;
+  renderWeekHistory();
+}
+
+async function renderWeekHistory(){
+  const wrap = document.getElementById('weekHistory');
+  wrap.innerHTML = '<div class="sub">جارِ التحميل... ⏳</div>';
+  const now = new Date();
+  let rows = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    const key = fmtDate(d);
+    const data = await safeGet('daily:'+key);
+    const fortDone = data ? FORTRESSES.filter(f=>data.fortresses && data.fortresses[f.id]).length : 0;
+    const actDone = data ? Object.values(data.activities||{}).filter(Boolean).length : 0;
+    rows.push({day: DAY_NAMES_FULL[d.getDay()], date:key, fortDone, actDone, isQ: isQuranDay(d)});
+  }
+  wrap.innerHTML = rows.map(r=>`
+    <div class="task-row">
+      <div class="task-info">
+        <div class="name">${r.day} <span class="sub" style="font-size:11px;">${r.date}</span></div>
+        <div class="freq">${r.isQ ? `🏰 الحصون: ${r.fortDone}/5` : '🌿 يوم راحة من الحفظ'} · أنشطة أخرى: ${r.actDone}</div>
+      </div>
+      ${r.isQ && r.fortDone===5 ? '<span style="font-size:20px;">✅</span>' : ''}
+    </div>`).join('');
+}
+
+function render(){
+  renderHeader();
+  renderFortresses();
+  renderOtherTasks();
+  renderQuranTab();
+  renderScheduleTab();
+  renderStatsTab();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+document.getElementById('pageMinus').addEventListener('click', async ()=>{
+  quranProgress.currentPage = Math.max(0, quranProgress.currentPage - settings.pagesPerDay);
+  await safeSet('quranProgress', quranProgress); renderQuranTab();
+});
+document.getElementById('pagePlus').addEventListener('click', async ()=>{
+  quranProgress.currentPage = Math.min(settings.totalPages, quranProgress.currentPage + settings.pagesPerDay);
+  await safeSet('quranProgress', quranProgress); renderQuranTab();
+});
+document.getElementById('pageInput').addEventListener('change', async (e)=>{
+  quranProgress.currentPage = Math.max(0, Math.min(settings.totalPages, parseInt(e.target.value,10)||0));
+  await safeSet('quranProgress', quranProgress); renderQuranTab();
+});
+
+document.getElementById('setTotalPages').addEventListener('change', async (e)=>{
+  settings.totalPages = Math.max(1, parseInt(e.target.value,10)||604);
+  await safeSet('settings', settings); renderQuranTab();
+});
+document.getElementById('setPagesPerDay').addEventListener('change', async (e)=>{
+  settings.pagesPerDay = Math.max(1, parseInt(e.target.value,10)||2);
+  await safeSet('settings', settings); renderQuranTab();
+});
+document.getElementById('setStartDate').addEventListener('change', async (e)=>{
+  settings.startDate = e.target.value;
+  await safeSet('settings', settings); renderQuranTab();
+});
+
+document.getElementById('kidsSewToggle').addEventListener('click', async ()=>{
+  settings.kidsSewUnlocked = !settings.kidsSewUnlocked;
+  await safeSet('settings', settings);
+  renderScheduleTab(); renderOtherTasks();
+});
+
+document.getElementById('podcastBtn').addEventListener('click', async ()=>{
+  settings.lastPodcastDate = fmtDate(new Date());
+  await safeSet('settings', settings);
+  renderPodcast();
+});
+
+loadAll();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+})();
+</script>
+</body>
+</html>
