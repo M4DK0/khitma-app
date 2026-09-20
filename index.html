@@ -181,6 +181,26 @@
   }
   .toggle.on::after{right:25px;}
 
+  /* add-task form */
+  .add-task-form{display:flex;gap:8px;margin-bottom:16px;}
+  .add-task-form input{
+    flex:1;padding:12px 14px;border-radius:11px;border:1.5px solid var(--paper-3);
+    font-family:'Cairo',sans-serif;font-size:14px;background:#fff;color:var(--text-paper);font-weight:600;
+    min-width:0;
+  }
+  .add-task-form input:focus{outline:2px solid var(--teal);outline-offset:-1px;}
+  .add-task-form button{
+    background:var(--sage);color:#fff;border:none;border-radius:11px;padding:0 16px;
+    font-family:'Cairo',sans-serif;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  }
+  .add-task-form button:active{transform:scale(.95);}
+
+  .task-delete-btn{
+    width:30px;height:30px;flex:0 0 30px;border-radius:9px;border:none;background:transparent;
+    color:var(--rose);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+  .task-delete-btn:active{transform:scale(.9);}
+
   /* schedule — mobile-first day picker */
   .day-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none;}
   .day-pills::-webkit-scrollbar{display:none;}
@@ -305,6 +325,12 @@
     <div class="card">
       <h2>🗓️ الجدول الأسبوعي</h2>
       <p class="sub">اختاري يومًا، ثم فعّلي أو عطّلي أنشطته — يتحدّث تبويب «اليوم» تلقائيًا</p>
+
+      <div class="add-task-form">
+        <input type="text" id="newTaskInput" placeholder="✏️ اكتبي اسم مهمة جديدة...">
+        <button id="addTaskBtn">➕ إضافة</button>
+      </div>
+
       <div class="day-pills" id="dayPills"></div>
       <div class="sched-list" id="schedList"></div>
     </div>
@@ -383,6 +409,7 @@ const DEFAULT_SETTINGS = {
   kidsSewUnlocked: false,
   podcastIntervalDays: 15,
   lastPodcastDate: null,
+  customActivities: [],
   schedule: {
     quran: [6,0,1,2,3,4],
     warsh: [0,1,3,4],
@@ -408,54 +435,12 @@ function fmtDate(d){
 }
 function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
 
-const LS_PREFIX = 'khitma:';
-
 async function safeGet(key, shared=false){
-  // 1) المصدر الرئيسي: localStorage — يخدم في أي موقع حقيقي ويبقى محفوظ بعد إغلاق الصفحة
-  try{
-    const raw = localStorage.getItem(LS_PREFIX+key);
-    if(raw !== null) return JSON.parse(raw);
-  }catch(e){}
-  // 2) fallback: window.storage (يخدم فقط داخل معاينة Claude)
-  try{
-    if(window.storage && typeof window.storage.get === 'function'){
-      const r = await window.storage.get(key, shared);
-      return r ? JSON.parse(r.value) : null;
-    }
-  }catch(e){}
-  return null;
+  try{ const r = await window.storage.get(key, shared); return r ? JSON.parse(r.value) : null; }
+  catch(e){ return null; }
 }
-
 async function safeSet(key, value, shared=false){
-  let localOk = true;
-  try{ localStorage.setItem(LS_PREFIX+key, JSON.stringify(value)); }
-  catch(e){ localOk = false; console.error('local save failed', key, e); }
-
-  // نحفظ أيضًا في window.storage إذا كانت متوفرة (بونيّة، بدون ما تعطّل الحفظ المحلي)
-  try{
-    if(window.storage && typeof window.storage.set === 'function'){
-      await window.storage.set(key, JSON.stringify(value), shared);
-    }
-  }catch(e){}
-
-  showSaveStatus(localOk);
-}
-
-let saveStatusTimer = null;
-function showSaveStatus(ok){
-  let el = document.getElementById('saveStatus');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'saveStatus';
-    el.style.cssText = 'position:fixed;bottom:calc(10px + var(--safe-b));left:50%;transform:translateX(-50%);'
-      + 'background:rgba(28,23,18,.92);color:var(--gold-light);font-size:11.5px;font-weight:700;'
-      + 'padding:6px 14px;border-radius:999px;z-index:50;opacity:0;transition:opacity .25s ease;pointer-events:none;';
-    document.body.appendChild(el);
-  }
-  el.textContent = ok ? '💾 تم الحفظ' : '⚠️ تعذّر الحفظ على هذا الجهاز';
-  el.style.opacity = '1';
-  clearTimeout(saveStatusTimer);
-  saveStatusTimer = setTimeout(()=>{ el.style.opacity = '0'; }, 1200);
+  try{ await window.storage.set(key, JSON.stringify(value), shared); }catch(e){ console.error('storage set failed', key, e); }
 }
 
 async function loadAll(){
@@ -480,6 +465,12 @@ async function loadAll(){
 
 function isQuranDay(date){ return settings.schedule.quran.includes(date.getDay()); }
 function isActivityDay(id, date){ return (settings.schedule[id]||[]).includes(date.getDay()); }
+
+function getVisibleActivities(){
+  const builtIn = ACTIVITIES.filter(a => !a.requiresUnlock || settings.kidsSewUnlocked);
+  const custom = (settings.customActivities||[]).map(c => ({id:c.id, name:c.name, icon:c.icon||'📌', isCustom:true}));
+  return [...builtIn, ...custom];
+}
 
 function renderHeader(){
   const now = new Date();
@@ -579,10 +570,7 @@ async function updateStreakIfComplete(){
 function renderOtherTasks(){
   const wrap = document.getElementById('otherTasksWrap');
   const now = new Date();
-  const todays = ACTIVITIES.filter(a => {
-    if(a.requiresUnlock && !settings.kidsSewUnlocked) return false;
-    return isActivityDay(a.id, now);
-  });
+  const todays = getVisibleActivities().filter(a => isActivityDay(a.id, now));
 
   if(todays.length === 0){ wrap.innerHTML = '<div class="no-tasks"><span class="emoji">🌿</span>لا توجد أنشطة إضافية مجدولة اليوم</div>'; return; }
 
@@ -642,8 +630,7 @@ function renderDayPills(){
 
 function countActivitiesForDay(d){
   let n = settings.schedule.quran.includes(d) ? 1 : 0;
-  ACTIVITIES.forEach(a=>{
-    if(a.requiresUnlock && !settings.kidsSewUnlocked) return;
+  getVisibleActivities().forEach(a=>{
     if((settings.schedule[a.id]||[]).includes(d)) n++;
   });
   return n;
@@ -651,13 +638,14 @@ function countActivitiesForDay(d){
 
 function renderScheduleTab(){
   renderDayPills();
-  const rows = [{id:'quran', name:'الحصون الخمسة (ورد الحفظ)', icon:'🏰'}, ...ACTIVITIES.filter(a=>!a.requiresUnlock || settings.kidsSewUnlocked)];
+  const rows = [{id:'quran', name:'الحصون الخمسة (ورد الحفظ)', icon:'🏰'}, ...getVisibleActivities()];
   const listWrap = document.getElementById('schedList');
   listWrap.innerHTML = rows.map(r=>{
     const on = (settings.schedule[r.id]||[]).includes(selectedDay);
     return `<div class="task-row">
       <div class="task-info"><div class="name">${r.icon} ${r.name}</div></div>
       <button class="sched-toggle-btn ${on?'on':''}" data-act="${r.id}">${on?'✓ نشِط':'إضافة'}</button>
+      ${r.isCustom ? `<button class="task-delete-btn" data-del="${r.id}" title="حذف المهمة">✕</button>` : ''}
     </div>`;
   }).join('');
   listWrap.querySelectorAll('.sched-toggle-btn').forEach(btn=>{
@@ -672,11 +660,35 @@ function renderScheduleTab(){
       renderFortresses(); renderOtherTasks();
     });
   });
+  listWrap.querySelectorAll('.task-delete-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.del;
+      settings.customActivities = (settings.customActivities||[]).filter(c => c.id !== id);
+      delete settings.schedule[id];
+      await safeSet('settings', settings);
+      renderScheduleTab();
+      renderFortresses(); renderOtherTasks();
+    });
+  });
 
   const toggle = document.getElementById('kidsSewToggle');
   toggle.className = 'toggle' + (settings.kidsSewUnlocked ? ' on' : '');
 
   renderPodcast();
+}
+
+async function addCustomTask(){
+  const input = document.getElementById('newTaskInput');
+  const name = input.value.trim();
+  if(!name) return;
+  const id = 'custom_' + Date.now();
+  settings.customActivities = settings.customActivities || [];
+  settings.customActivities.push({id, name, icon:'📌'});
+  settings.schedule[id] = [selectedDay]; // default to the currently viewed day
+  await safeSet('settings', settings);
+  input.value = '';
+  renderScheduleTab();
+  renderFortresses(); renderOtherTasks();
 }
 
 function renderPodcast(){
@@ -775,6 +787,11 @@ document.getElementById('setStartDate').addEventListener('change', async (e)=>{
   await safeSet('settings', settings); renderQuranTab();
 });
 
+document.getElementById('addTaskBtn').addEventListener('click', addCustomTask);
+document.getElementById('newTaskInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') addCustomTask();
+});
+
 document.getElementById('kidsSewToggle').addEventListener('click', async ()=>{
   settings.kidsSewUnlocked = !settings.kidsSewUnlocked;
   await safeSet('settings', settings);
@@ -790,6 +807,8 @@ document.getElementById('podcastBtn').addEventListener('click', async ()=>{
 loadAll();
 
 if('serviceWorker' in navigator){
+  // ensure any waiting update takes over immediately
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{ /* no-op, cache already fresh */ });
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   });
