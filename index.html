@@ -336,15 +336,6 @@
     </div>
 
     <div class="card">
-      <h2>🧸 خياطة ملابس الأطفال</h2>
-      <div class="settings-row">
-        <label>هل أنهيتِ دورة خياطة المفروشات؟</label>
-        <div class="toggle" id="kidsSewToggle"></div>
-      </div>
-      <p class="sub" style="margin:0;">فعّلي هذا الخيار لإظهار نشاط خياطة ملابس الأطفال في جدولك الأسبوعي.</p>
-    </div>
-
-    <div class="card">
       <h2>🎙️ البودكاست</h2>
       <p class="sub">إعداد وتسجيل حلقة كل 15 يومًا — لا يتبع جدولاً أسبوعيًا ثابتًا</p>
       <div class="podcast-box">
@@ -374,7 +365,7 @@
     </div>
   </div>
 
-  <div class="footer-note">🔒 جميع بياناتك محفوظة على هذا الجهاز فقط.<br><b>بارك الله في حفظك وجهدك 🌙✨</b></div>
+  <div class="footer-note">🔒 جميع بياناتك محفوظة على هذا الجهاز فقط.<br><b>بارك الله في حفظك وجهدك 🌙✨</b><br><span style="opacity:.5;">الإصدار v4 — 2026/09/21</span></div>
 </div>
 
 <script>
@@ -385,7 +376,7 @@ const ACTIVITIES = [
   {id:'sport', name:'الرياضة', icon:'🏃‍♀️'},
   {id:'fiqh', name:'الفقه المالكي', icon:'⚖️'},
   {id:'sewFurniture', name:'خياطة المفروشات', icon:'🧵'},
-  {id:'sewKids', name:'خياطة ملابس الأطفال', icon:'🧸', requiresUnlock:true},
+  {id:'sewKids', name:'خياطة ملابس الأطفال', icon:'🧸'},
   {id:'diverse', name:'المحتوى المنوع', icon:'🎬'},
   {id:'kidsContent', name:'المحتوى التعليمي للأطفال', icon:'🧒'},
 ];
@@ -406,7 +397,6 @@ const DEFAULT_SETTINGS = {
   totalPages: 604,
   pagesPerDay: 2,
   startDate: null,
-  kidsSewUnlocked: false,
   podcastIntervalDays: 15,
   lastPodcastDate: null,
   customActivities: [],
@@ -452,6 +442,21 @@ async function loadAll(){
   settings = s ? {...DEFAULT_SETTINGS, ...s, schedule:{...DEFAULT_SETTINGS.schedule, ...(s.schedule||{})}} : {...DEFAULT_SETTINGS};
   if(!settings.startDate){ settings.startDate = todayKey; await safeSet('settings', settings); }
 
+  // one-time migration: fold the old fixed built-in activities into the
+  // editable customActivities list so every task (old or new) can be
+  // freely added or removed, same as any custom one.
+  if(!settings.migratedBuiltins){
+    settings.customActivities = settings.customActivities || [];
+    const existingIds = new Set(settings.customActivities.map(c=>c.id));
+    ACTIVITIES.forEach(a=>{
+      if(!existingIds.has(a.id)){
+        settings.customActivities.push({id:a.id, name:a.name, icon:a.icon});
+      }
+    });
+    settings.migratedBuiltins = true;
+    await safeSet('settings', settings);
+  }
+
   const qp = await safeGet('quranProgress');
   quranProgress = qp || {currentPage:0, cycle:1};
 
@@ -468,9 +473,7 @@ function isQuranDay(date){ return settings.schedule.quran.includes(date.getDay()
 function isActivityDay(id, date){ return (settings.schedule[id]||[]).includes(date.getDay()); }
 
 function getVisibleActivities(){
-  const builtIn = ACTIVITIES.filter(a => !a.requiresUnlock || settings.kidsSewUnlocked);
-  const custom = (settings.customActivities||[]).map(c => ({id:c.id, name:c.name, icon:c.icon||'📌', isCustom:true}));
-  return [...builtIn, ...custom];
+  return (settings.customActivities||[]).map(c => ({id:c.id, name:c.name, icon:c.icon||'📌'}));
 }
 
 function renderHeader(){
@@ -639,14 +642,14 @@ function countActivitiesForDay(d){
 
 function renderScheduleTab(){
   renderDayPills();
-  const rows = [{id:'quran', name:'الحصون الخمسة (ورد الحفظ)', icon:'🏰'}, ...getVisibleActivities()];
+  const rows = [{id:'quran', name:'الحصون الخمسة (ورد الحفظ)', icon:'🏰', core:true}, ...getVisibleActivities()];
   const listWrap = document.getElementById('schedList');
   listWrap.innerHTML = rows.map(r=>{
     const on = (settings.schedule[r.id]||[]).includes(selectedDay);
     return `<div class="task-row">
       <div class="task-info"><div class="name">${r.icon} ${r.name}</div></div>
       <button class="sched-toggle-btn ${on?'on':''}" data-act="${r.id}">${on?'✓ نشِط':'إضافة'}</button>
-      ${r.isCustom ? `<button class="task-delete-btn" data-del="${r.id}" title="حذف المهمة">✕</button>` : ''}
+      ${!r.core ? `<button class="task-delete-btn" data-del="${r.id}" title="حذف المهمة نهائيًا">✕</button>` : ''}
     </div>`;
   }).join('');
   listWrap.querySelectorAll('.sched-toggle-btn').forEach(btn=>{
@@ -664,6 +667,7 @@ function renderScheduleTab(){
   listWrap.querySelectorAll('.task-delete-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const id = btn.dataset.del;
+      if(!confirm('حذف هذه المهمة نهائيًا من كل الأيام؟')) return;
       settings.customActivities = (settings.customActivities||[]).filter(c => c.id !== id);
       delete settings.schedule[id];
       await safeSet('settings', settings);
@@ -671,9 +675,6 @@ function renderScheduleTab(){
       renderFortresses(); renderOtherTasks();
     });
   });
-
-  const toggle = document.getElementById('kidsSewToggle');
-  toggle.className = 'toggle' + (settings.kidsSewUnlocked ? ' on' : '');
 
   renderPodcast();
 }
@@ -791,12 +792,6 @@ document.getElementById('setStartDate').addEventListener('change', async (e)=>{
 document.getElementById('addTaskBtn').addEventListener('click', addCustomTask);
 document.getElementById('newTaskInput').addEventListener('keydown', (e)=>{
   if(e.key === 'Enter') addCustomTask();
-});
-
-document.getElementById('kidsSewToggle').addEventListener('click', async ()=>{
-  settings.kidsSewUnlocked = !settings.kidsSewUnlocked;
-  await safeSet('settings', settings);
-  renderScheduleTab(); renderOtherTasks();
 });
 
 document.getElementById('podcastBtn').addEventListener('click', async ()=>{
