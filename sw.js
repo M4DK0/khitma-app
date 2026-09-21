@@ -1,17 +1,14 @@
-const CACHE_NAME = 'khitma-mutqana-v1';
-const ASSETS_TO_CACHE = [
-  './',
+const CACHE_NAME = 'khitma-cache-v3';
+const ASSETS = [
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-180.png',
   './icon-512.png',
-  './icon-512-maskable.png'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).catch(()=>{})
   );
   self.skipWaiting();
 });
@@ -25,18 +22,19 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// Network-first: always try to get the freshest version when online.
+// Falls back to cache only when the network request fails (offline).
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request)
-        .then((response) => {
+    fetch(event.request, {cache:'no-store'})
+      .then((response) => {
+        if (response && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          return response;
-        })
-        .catch(() => cached);
-    })
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
